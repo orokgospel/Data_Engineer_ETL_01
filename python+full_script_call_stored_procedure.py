@@ -9,9 +9,6 @@ DB_CONFIG = {
 }
 
 def call_procedure():
-    conn = None
-    cursor = None
-    try:
         conn = psycopg2.connect(**DB_CONFIG)
         cursor = conn.cursor()
         print("✅ Connection successful")
@@ -23,18 +20,8 @@ def call_procedure():
         conn.commit()
 
         print("✅ Stored procedure executed successfully")
-
-    except Exception as e:
-        print("❌ Error:", e)
-        if conn:
-            conn.rollback()
-            print("🔄 Transaction rolled back")
-
-    finally:
-        if cursor:
-            cursor.close()
-        if conn:
-            conn.close()
+        cursor.close()
+        conn.close()
         print("🔒 Connection closed")
         print("Job done")
 
