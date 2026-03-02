@@ -9,10 +9,6 @@ DB_CONFIG = {
 }
 
 def truncate_and_insert():
-    conn = None
-    cursor = None
-
-    try:
         conn = psycopg2.connect(**DB_CONFIG)
         cursor = conn.cursor()
         print("✅ Connection successful")
@@ -32,19 +28,8 @@ def truncate_and_insert():
         cursor.execute(insert_query)
         conn.commit()
         print("✅ Data inserted successfully")
-
-    except Exception as e:
-        print("❌ Error:", e)
-
-        if conn is not None:
-            conn.rollback()
-            print("Transaction rolled back")
-
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if conn is not None:
-            conn.close()
+        cursor.close()
+        conn.close()
 
         print("🔒 Connection closed")
         print("Job done")
