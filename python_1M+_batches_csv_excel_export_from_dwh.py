@@ -19,7 +19,7 @@ engine = create_engine(
 # =======================================
 # Export settings
 # =======================================
-TABLE_NAME  = "public.individual_acct"
+TABLE_NAME  = "public.transactions"
 BATCH_SIZE  = 1_000_000
 START_BATCH = 3   # 👈 CHANGE THIS IF NEEDED
 EXPORT_PATH = "./exports"
@@ -101,4 +101,5 @@ except KeyboardInterrupt:
 
 finally:
     engine.dispose()
+
     print("Database connection closed.")
