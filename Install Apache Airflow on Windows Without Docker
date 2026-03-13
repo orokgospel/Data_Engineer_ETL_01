@@ -1,10 +1,14 @@
 
 #Install Apache Airflow on Windows Without Docker | Step-by-Step Tutorial (2025)
-#Step 1:
+
+#STEP 1 (ONE):
 #Install Ubuntu terminal App(microsoft store)
+
 #launch the APP
+
 #Set up new user and password
-#Step 2:
+
+#STEP 2 (TWO):
 #install Airflow
 First check: https://pypi.org/project/apache-airflow/
 # Before running, visit https://pypi.org/project/apache-airflow/
