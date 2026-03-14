@@ -1,0 +1,20 @@
+Apache airflow on Windows Docker
+
+Step 1
+Download Docker Desktop for Windows:
+https://docs.docker.com/desktop
+search and run this on command prompt:
+wsl --uppdate
+next launch the docker app and follow the set up process
+also install vs code if you don't have:
+Download Visual Studio Code:
+https://code.visualstudio.com/download
+
+step 2
+create a dedicated airflow folder for airflow work
+name it: workspace
+inside the folder, right click on empty space and open terminal
+enter:
+code .
+the command will launch vs code and open the folder for developement
+
