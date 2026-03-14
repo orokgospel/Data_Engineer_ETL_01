@@ -1,71 +1,174 @@
+Install Apache Airflow on Windows (Without Docker) – Step-by-Step Guide (2026)
+This guide explains how to install Apache Airflow on Windows using WSL (Ubuntu) without Docker.
+Airflow runs best on Linux, so we install it using Ubuntu via Windows Subsystem for Linux (WSL).
 
+📺 Reference Video:
+https://youtu.be/mUA9k2N-Ros
 
+Prerequisites:
+Before starting, ensure you have:
+Windows 10 or Windows 11
+Microsoft Store access
+Internet connection
+Basic terminal knowledge
 
-#Install Apache Airflow on Windows Without Docker | Step-by-Step Tutorial (2025)
+Step 1 — Install Ubuntu (WSL)
+Open Microsoft Store
+Search for Ubuntu
+Install the Ubuntu Terminal App
 
-#Youtube https://youtu.be/mUA9k2N-Ros
+After installation:
+Launch Ubuntu
+The first launch will ask you to:
+Create a username
+Create a password
+Example:
+Username: gospel
+Password: ********
+Once completed, you will have a Linux terminal running on Windows.
 
-#STEP 1 (ONE):
-#Install Ubuntu terminal App(you simply search for ubuntu in your microsoft store)
-
-#launch the APP
-#Set up new user account and password, when you launch it for the first time
-
-#STEP 2 (TWO):
-#install Airflow
-First check: https://pypi.org/project/apache-airflow/
-# Before running, visit https://pypi.org/project/apache-airflow/
-# recommendation: always check the official apache airflow project page to know the suitable and compatible version to use and install 
-#because versions keeps chnaging from time to time
-# to find the latest AIRFLOW_VERSION and its corresponding supported PYTHON_VERSION.
-# Update the PYTHON_VERSION and AIRFLOW_VERSION variables below accordingly — no other changes to the script are needed.
-
-# Update versions here as per the instructions above
+Step 2 — Check Airflow Compatibility
+Before installing Airflow, always check the official PyPI page:
+🔗 https://pypi.org/project/apache-airflow/
+This page shows:
+Latest Airflow version
+Supported Python versions
+⚠️ Airflow versions change frequently, so always verify compatibility.
+For this guide we use:
 AIRFLOW_VERSION=3.1.8
 PYTHON_VERSION=3.12
-#IN your ubuntu terminal
-#1. Run these commands in your ubuntun terminal each
-AIRFLOW_VERSION=3.1.8
-PYTHON_VERSION=3.12
 
-#2 Update the packages using sudo apt update command below and please enter password if prompted
-sudo apt update
+Step 3 — Update Ubuntu Packages
+Update system packages before installing dependencies:
+type the following in your terminal:
+- AIRFLOW_VERSION=3.1.8
+- PYTHON_VERSION=3.12
+- sudo apt update
+Enter your password if prompted.
 
-#3 Install the required Python version along with necessary packages
-sudo apt install -y python${PYTHON_VERSION} python${PYTHON_VERSION}-venv python${PYTHON_VERSION}-dev python3-pip build-essential
+Step 4 — Install Python and Required Dependencies
+Install the required Python version and development packages:
+- sudo apt install -y python3.12 python3.12-venv python3.12-dev python3-pip build-essential
 
-#4 Create a virtual environment for Airflow and activate it
-mkdir -p ~/venvs
-python${PYTHON_VERSION} -m venv ~/venvs/airflow_${AIRFLOW_VERSION}
-source ~/venvs/airflow_${AIRFLOW_VERSION}/bin/activate
+Step 5 — Create a Python Virtual Environment
+Create a virtual environment for Airflow:
+- mkdir -p ~/venvs
+- python${PYTHON_VERSION} -m venv ~/venvs/airflow_${AIRFLOW_VERSION}
 
-#4 Upgrade pip to the latest version
-pip install --upgrade pip
+Activate the environment:
+- source ~/venvs/airflow_${AIRFLOW_VERSION}/bin/activate
+Your terminal should now look like:
+(airflow_3.1.8) user@machine:~$
 
-#5 Define the constraint-file URL
-CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+Step 6 — Upgrade pip
+Upgrade pip to the latest version.
+- pip install --upgrade pip
 
-#6 Install Apache Airflow with the specified version and constraints (dependency versions)
-pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "$CONSTRAINT_URL"
+Step 7 — Install Apache Airflow
+Define the constraints file.
+This ensures compatible dependency versions are installed:
+- CONSTRAINT_URL="https://raw.githubusercontent.com/apache/airflow/constraints-${AIRFLOW_VERSION}/constraints-${PYTHON_VERSION}.txt"
+Install Airflow:
+- pip install "apache-airflow==${AIRFLOW_VERSION}" --constraint "$CONSTRAINT_URL"
 
+Step 8 — Start Airflow
+To start Airflow,open new ubuntu terminal, activate the environment and run:
+- source ~/venvs/airflow_${AIRFLOW_VERSION}/bin/activate
+- airflow standalone
 
-#7 Next is to run or iniotiate the airflow intalled and you can always run this  anytime you want to execute or inititae airflow
-# this part can be saved inhome directory and be rum in one go and make sure to keep terminal running do not close terminal inititated while running airflow.
-#!/bin/bash
-set -e
-# Before running, update the AIRFLOW_VERSION below as needed:
-AIRFLOW_VERSION=3.1.8
-# Activate the virtual environment:
-source ~/venvs/airflow_${AIRFLOW_VERSION}/bin/activate
-# Launch Airflow and its components:
-airflow standalone
+⚠️ Important:
+Keep this terminal running
+Do not close the terminal while Airflow is active
 
-#8 login via web page and login with admin as user and password generated by airflow in airflow log:
-http://localhost:8080/
-#9 develop  your own airflow dag using vscode by opening new ubuntu terminal and navigate to airflow terminal
-cd airflow/
+Airflow will start:
+Scheduler
+Webserver
+Metadata database
+
+Step 9 — Access the Airflow Web UI
+Open your browser and navigate to:
+http://localhost:8080
+Login with:
+Username: admin
+Password: (generated by Airflow)
+The password is displayed in the terminal logs during startup.
+You can also find it in:
+simple_auth_manager_passwords.json.generated
+
+Step 10 — Open the Airflow Project in VS Code
+Open a new Ubuntu terminal and navigate to the Airflow directory.
+cd airflow
 code .
-when the vscode opens make sure the buttom of the vscode showa WSL ubuntu
-you can also find your password in simple_auth_manager_passwords.json.generated file
+When VS Code opens:
+Ensure the bottom-left shows WSL: Ubuntu
+This confirms you are working inside the Linux environment.
 
+Step 11 — in your vscode,Create Your First DAG
+Create the dags folder if it does not exist.
 
+-- mkdir -p dags
+
+Create a new file:my_first_airflow_dag.py
+paste the code below inthe file:
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import datetime
+
+with DAG(
+    dag_id='my_first_airflow_dag',
+    start_date=datetime(2025, 8, 1),
+    schedule='@daily',
+    catchup=False,
+) as dag:
+    start_task = BashOperator(
+        task_id='start_task',
+        bash_command='echo "Starting the workflow!"',
+    )
+    welcome_task = BashOperator(
+        task_id='welcome_task',
+        bash_command='echo "Welcome, $(whoami)! This is your first Airflow DAG."',
+    )
+    end_task = BashOperator(
+        task_id='end_task',
+        bash_command='echo "Workflow completed!"',
+    )
+    start_task >> welcome_task >> end_task
+
+Step 12 — View the DAG in Airflow
+Go to the Airflow Web UI
+Search for: my_first_airflow_dag
+Enable the DAG
+Trigger it manually if needed.
+You should now see your first Airflow workflow running.
+
+Project Structure
+Typical Airflow directory structure:
+
+airflow/
+│
+├── dags/
+│   └── my_first_airflow_dag.py
+│
+├── logs/
+├── plugins/
+└── airflow.cfg
+
+Useful Commands
+Activate Airflow environment: source ~/venvs/airflow_3.1.8/bin/activate
+Start Airflow: airflow standalone
+Stop Airflow: CTRL + C
+
+Conclusion
+You have successfully:
+Installed Apache Airflow on Windows
+Configured it using Ubuntu (WSL)
+Launched the Airflow Web UI
+Created your first DAG
+
+This setup is ideal for:
+
+Learning Airflow
+
+Local ETL development
+
+Testing data pipelines
