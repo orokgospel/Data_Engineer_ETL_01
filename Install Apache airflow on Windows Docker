@@ -22,9 +22,42 @@ docker build -t sleek-airflow:latest .
 Then Start the Airflow Container:
 docker run -d -p 8081:8080 --name sleek-airflow sleek-airflow:latest standalone
 http://localhost:8081
-To view logs to get password: AXMW8x8uUGbsrGGM
+To view logs to get password:  74ZcwqX3EA7GA5TA
 docker logs sleek-airflow
 
+
+docker rm sleek-airflow
+
+Create the folders Airflow needs
+
+Right now your directory only had a Dockerfile earlier.
+You must create the folders that you mapped as volumes.
+
+NEXT:
+airflow-docker
+│
+├── dags
+├── logs
+├── plugins
+├── airflow_home
+├── docker-compose.yml
+└── dockerfile
+
+Run the script below for volume mapping: Your Windows folders will be mounted into the container.
+
+docker run -d ^
+-p 8081:8080 ^
+-v C:\Users\USER\workspace\airflow-docker\dags:/opt/airflow/dags ^
+-v C:\Users\USER\workspace\airflow-docker\logs:/opt/airflow/logs ^
+-v C:\Users\USER\workspace\airflow-docker\plugins:/opt/airflow/plugins ^
+-v C:\Users\USER\workspace\airflow-docker\airflow_home:/opt/airflow ^
+--name sleek-airflow ^
+sleek-airflow:latest standalone
+
+Confirm the DAG folder is actually mounted:
+docker exec -it sleek-airflow bash
+
+Create DAGS in VS Code
 
 TO START AIRFLOW WITH COMMAND LINE IN WINDOWS:
 Open Docker app
@@ -36,7 +69,7 @@ Open Docker app
 TO CHECK RUNNING CONTAINERS:
       - docker ps
 TO VIEW LOGS:
-      - docker logs -f sleek-airflow 
+      - docker logs sleek-airflow 
 try running http://localhost:8081/
 
 TO STOP
