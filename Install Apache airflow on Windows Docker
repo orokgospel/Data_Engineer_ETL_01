@@ -12,9 +12,21 @@ https://code.visualstudio.com/download
 
 step 2
 create a dedicated airflow folder for airflow work
-name it: workspace
+Name it: workspace
 inside the folder, right click on empty space and open terminal
 enter:
 code .
-the command will launch vs code and open the folder for developement
+the command will launch VS Code and open the folder for development
 
+
+
+
+TO START AIRFLOW WITH COMMAND LINE IN WINDOWS:
+Open Docker app
+  -  cd workspace
+    - cd airflow-docker
+      - dir
+      - docker ps -a
+      - docker start sleek-airflow
+      - docker ps
+try running http://localhost:8081/
