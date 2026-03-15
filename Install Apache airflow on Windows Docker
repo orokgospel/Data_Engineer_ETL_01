@@ -43,6 +43,17 @@ airflow-docker
 ├── docker-compose.yml
 └── dockerfile
 
+Add this in docker-compose.yml file:
+version: '3'
+services:
+  sleek-airflow:
+    image: sleek-airflow:latest
+    volumes:
+      - ./airflow:/opt/airflow
+    ports:
+      - "8080:8080"
+    command: airflow standalone
+
 Run the script below for volume mapping: Your Windows folders will be mounted into the container.
 
 docker run -d ^
