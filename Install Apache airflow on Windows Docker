@@ -17,8 +17,13 @@ inside the folder, right click on empty space and open terminal
 enter:
 code .
 the command will launch VS Code and open the folder for development
-
-
+RUN ON COMMAND:
+docker build -t sleek-airflow:latest .
+Then Start the Airflow Container:
+docker run -d -p 8081:8080 --name sleek-airflow sleek-airflow:latest standalone
+http://localhost:8081
+To view logs to get password: AXMW8x8uUGbsrGGM
+docker logs sleek-airflow
 
 
 TO START AIRFLOW WITH COMMAND LINE IN WINDOWS:
@@ -28,5 +33,13 @@ Open Docker app
       - dir
       - docker ps -a
       - docker start sleek-airflow
+TO CHECK RUNNING CONTAINERS:
       - docker ps
+TO VIEW LOGS:
+      - docker logs -f sleek-airflow 
 try running http://localhost:8081/
+
+TO STOP
+docker stop sleek-airflow
+
+
