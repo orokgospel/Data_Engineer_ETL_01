@@ -1,0 +1,87 @@
+from airflow import DAG
+from airflow.operators.python import PythonOperator
+from airflow.utils.dates import days_ago
+import pandas as pd
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email import encoders
+import os
+
+# --- Config ---
+DB_CONN_STRING = "postgresql+psycopg2://username:password@host:port/dbname"
+QUERY = "SELECT * FROM customers;"
+CSV_PATH = "/tmp/customers_report.csv"
+
+SENDER_EMAIL = "orokgospel@gmail.com"
+SENDER_PASSWORD = "ywuk xdzg citw dtgb"
+RECEIVER_EMAIL = "orokgospel@gmail.com"
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 465
+
+# --- DAG default args ---
+default_args = {
+    'owner': 'Gospel Orok',
+    'depends_on_past': False,
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'retries': 1,
+}
+
+# --- Functions ---
+def extract_customers():
+    """Query customers table and save to CSV"""
+    import sqlalchemy
+    engine = sqlalchemy.create_engine(DB_CONN_STRING)
+    df = pd.read_sql(QUERY, engine)
+    df.to_csv(CSV_PATH, index=False)
+    print(f"Customer data saved to {CSV_PATH}")
+
+def send_email():
+    """Send CSV file as attachment via Gmail"""
+    msg = MIMEMultipart()
+    msg['From'] = SENDER_EMAIL
+    msg['To'] = RECEIVER_EMAIL
+    msg['Subject'] = "Daily Customers Report"
+
+    # Email body
+    body = "Hi,\n\nPlease find attached the daily customers report.\n\nRegards."
+    msg.attach(MIMEText(body, 'plain'))
+
+    # Attach CSV
+    with open(CSV_PATH, 'rb') as f:
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(f.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename={os.path.basename(CSV_PATH)}')
+        msg.attach(part)
+
+    # Send email
+    with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
+        server.login(SENDER_EMAIL, SENDER_PASSWORD)
+        server.sendmail(SENDER_EMAIL, RECEIVER_EMAIL, msg.as_string())
+    print(f"Email sent to {RECEIVER_EMAIL}")
+
+# --- DAG definition ---
+with DAG(
+    'daily_customers_email',
+    default_args=default_args,
+    description='Extract customers table and email as CSV daily',
+    schedule_interval='0 8 * * *',  # daily at 8:00 AM
+    start_date=days_ago(1),
+    catchup=False,
+    tags=['customers', 'email', 'daily'],
+) as dag:
+
+    task_extract = PythonOperator(
+        task_id='extract_customers',
+        python_callable=extract_customers
+    )
+
+    task_email = PythonOperator(
+        task_id='send_email',
+        python_callable=send_email
+    )
+
+    task_extract >> task_email
