@@ -1,0 +1,138 @@
+Install PostgreSQL on Linux
+✅ Step 1: Update system
+sudo apt update
+sudo apt upgrade -y
+✅ Step 2: Install PostgreSQL
+sudo apt install postgresql postgresql-contrib -y
+✅ Step 3: Start PostgreSQL service
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
+
+Check status:
+
+sudo systemctl status postgresql
+✅ Step 4: Access PostgreSQL
+sudo -u postgres psql
+
+You should see:
+
+postgres=#
+✅ Step 5: Create your own user & database
+
+Inside psql:
+
+CREATE DATABASE airflow_db;
+
+CREATE USER airflow_user WITH PASSWORD 'strongpassword';
+
+ALTER ROLE airflow_user SET client_encoding TO 'utf8';
+ALTER ROLE airflow_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE airflow_user SET timezone TO 'UTC';
+
+GRANT ALL PRIVILEGES ON DATABASE airflow_db TO airflow_user;
+
+Exit:
+
+\q
+🔓 2. Allow password authentication (IMPORTANT)
+
+Edit config:
+
+sudo nano /etc/postgresql/*/main/pg_hba.conf
+
+Find:
+
+local   all             all                                     peer
+
+Change to:
+
+local   all             all                                     md5
+
+Restart PostgreSQL:
+
+sudo systemctl restart postgresql
+🧪 3. Test connection
+psql -U airflow_user -d airflow_db -h localhost
+🖥️ 4. Install pgAdmin (GUI tool)
+✅ Option 1 (Recommended – Official repo)
+curl https://www.pgadmin.org/static/packages_pgadmin_org.pub | sudo gpg --dearmor -o /usr/share/keyrings/pgadmin-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/pgadmin-keyring.gpg] https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" | sudo tee /etc/apt/sources.list.d/pgadmin4.list
+sudo apt update
+sudo apt install pgadmin4 -y
+✅ Step 2: Launch pgAdmin
+pgadmin4
+
+OR (web mode):
+
+sudo /usr/pgadmin4/bin/setup-web.sh
+
+Then open:
+
+http://localhost/pgadmin4
+🔗 5. Connect pgAdmin to PostgreSQL
+
+Inside pgAdmin:
+
+Right click → Register Server
+Connection settings:
+Field	Value
+Host	localhost
+Port	5432
+Username	airflow_user
+Password	your password
+🧱 6. Create your customers table (for your DAG)
+
+Run this in pgAdmin Query Tool:
+
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(100),
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO customers (full_name, email)
+VALUES 
+('Gospel Orok', 'orokgospel@gmail.com'),
+('John Doe', 'john@example.com');
+🔥 7. Use it in your Airflow DAG
+
+Update your connection string:
+
+DB_CONN_STRING = "postgresql+psycopg2://airflow_user:strongpassword@host.docker.internal:5432/airflow_db"
+
+👉 ⚠️ Important:
+
+If Airflow runs in Docker → use:
+
+host.docker.internal
+
+If same machine (no Docker):
+
+localhost
+⚡ Pro Tip (VERY IMPORTANT)
+
+Since you're using Airflow + Docker:
+
+👉 Install PostgreSQL using Docker instead (better for your setup)
+
+If you want, I can give you:
+
+Full docker-compose.yml
+Airflow + PostgreSQL + pgAdmin all integrated
+Production-ready structure (what banks use)
+✅ Summary
+Tool	Purpose
+PostgreSQL	Database
+pgAdmin	GUI to manage DB
+Airflow	Orchestration
+🚀 Next Step (Recommended)
+
+Tell me:
+
+👉 Do you want PostgreSQL installed:
+
+On Linux (what we just did)
+Or inside Docker (better for your Airflow setup)
+
+I’ll guide you the best architecture for your environment.
