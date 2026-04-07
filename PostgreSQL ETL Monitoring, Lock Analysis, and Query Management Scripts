@@ -1,0 +1,274 @@
+This is real production-level PostgreSQL monitoring & troubleshooting SQL, and it’s exactly what a data engineer should understand deeply.
+
+1. Kill a Specific Query
+SELECT pg_terminate_backend(3527723);
+ What it does:
+Forcefully kills a running PostgreSQL session (process) using its PID (Process ID)
+ Breakdown:
+pg_terminate_backend(pid) → Terminates the backend process completely
+3527723 → The process ID of the query/session
+Important:
+This is forceful
+It will:
+Stop the query
+Rollback any transaction
+Disconnect the user
+
+When to use:
+A query is stuck or hanging
+A session is blocking others
+Emergency situation
+
+2. Identify Blocking Queries (VERY IMPORTANT)
+
+--check and identify blocking querries 
+
+SELECT blocked_locks.pid AS blocked_pid, blocked_activity.usename AS blocked_user, blocking_locks.pid AS blocking_pid, blocking_activity.usename AS blocking_user, 
+blocked_activity.query AS blocked_query, blocking_activity.query AS blocking_query
+ FROM pg_locks blocked_locks 
+JOIN pg_stat_activity blocked_activity ON blocked_activity.pid = blocked_locks.pid JOIN pg_locks blocking_locks ON blocking_locks.locktype = blocked_locks.locktype
+AND blocking_locks.database IS NOT DISTINCT FROM blocked_locks.database AND blocking_locks.relation IS NOT DISTINCT FROM blocked_locks.relation 
+AND blocking_locks.page IS NOT DISTINCT FROM blocked_locks.page AND blocking_locks.tuple IS NOT DISTINCT 
+FROM blocked_locks.tuple AND 
+blocking_locks.virtualxid IS NOT DISTINCT FROM blocked_locks.virtualxid AND blocking_locks.transactionid IS NOT DISTINCT 
+FROM blocked_locks.transactionid AND blocking_locks.classid IS NOT DISTINCT FROM blocked_locks.classid AND blocking_locks.objid IS NOT DISTINCT 
+FROM blocked_locks.objid AND blocking_locks.objsubid IS NOT DISTINCT FROM blocked_locks.objsubid AND blocking_locks.pid != blocked_locks.pid 
+JOIN pg_stat_activity blocking_activity ON blocking_activity.pid = blocking_locks.pid 
+WHERE NOT blocked_locks.GRANTED and blocked_activity.query like '%customers%'
+-- and blocking_locks.pid = 452933 
+order by blocked_activity.usename;
+
+
+SELECT
+   blocked_locks.pid     AS blocked_pid,
+   blocked_activity.usename  AS blocked_user,
+   blocking_locks.pid    AS blocking_pid,
+   blocking_activity.usename AS blocking_user,
+   blocked_activity.query AS blocked_query,
+   blocking_activity.query AS blocking_query
+What it does:
+Finds:
+Queries that are blocked (waiting)
+Queries that are blocking (causing the problem)
+
+FULL LOGIC EXPLAINED
+Step 1: Base table — pg_locks
+FROM pg_locks blocked_locks
+Contains all locks in PostgreSQL
+Each row = a lock request
+
+Step 2: Get blocked query details
+JOIN pg_stat_activity blocked_activity 
+ON blocked_activity.pid = blocked_locks.pid
+pg_stat_activity → shows running queries
+We link:
+lock → actual SQL query
+
+Step 3: Find matching blocking locks
+JOIN pg_locks blocking_locks
+ON blocking_locks.locktype = blocked_locks.locktype
+Then many conditions like:
+AND blocking_locks.database IS NOT DISTINCT FROM blocked_locks.database
+ Why this is done:
+PostgreSQL locks can be on:
+Tables
+Rows
+Transactions
+Pages
+So we match ALL lock attributes to ensure:
+We find the exact blocking lock
+
+Step 4: Exclude same process
+AND blocking_locks.pid != blocked_locks.pid
+Avoid self-join (same query blocking itself)
+
+Step 5: Get blocking query info
+JOIN pg_stat_activity blocking_activity
+ON blocking_activity.pid = blocking_locks.pid
+
+Step 6: Only show blocked queries
+WHERE NOT blocked_locks.GRANTED
+granted = false → lock is waiting → blocked
+
+Step 7: Optional filter
+AND blocked_activity.query LIKE '%customersd%'
+Filters queries containing 'stmt'
+You can remove this if not needed
+
+Output Meaning:
+Column
+Meaning
+blocked_pid
+Query being blocked
+blocking_pid
+Query causing blockage
+blocked_query
+Waiting query
+blocking_query
+Problem query
+
+
+When to use:
+System is slow
+Queries are hanging
+Deadlock investigation
+
+3. View Locks on Tables
+SELECT
+   a.pid,
+   a.usename,
+   a.query,
+   l.mode,
+   l.granted,
+   c.relname AS locked_table
+
+SELECT a.pid, a.usename, a.query, l.mode, l.granted, c.relname AS locked_table FROM pg_locks l JOIN pg_stat_activity a ON a.pid = l.pid 
+LEFT JOIN pg_class c ON l.relation = c.oid WHERE c.relname IS NOT NULL ORDER BY l.granted, c.relname;
+What it does:
+Shows:
+Who is locking what
+Lock type
+Whether it's granted
+
+ Breakdown:
+Column
+Meaning
+pid
+Process ID
+usename
+DB user
+query
+SQL running
+mode
+Lock type (e.g., AccessShareLock, RowExclusiveLock)
+granted
+TRUE = active lock
+locked_table
+Table affected
+
+
+When to use:
+To see who is locking tables
+Debug performance issues
+
+4. Check Locks on Specific Tables
+
+SELECT l.pid, relname AS table_name, mode, usename FROM pg_locks l JOIN pg_stat_activity a ON a.pid = l.pid LEFT 
+JOIN pg_class c ON l.relation = c.oid WHERE c.relname IN ('customer_accounts','activity_table') AND l.granted = true;
+
+What it does:
+Filters locks for:
+Specific tables only
+
+Use case:
+When a particular table is slow
+During ETL jobs (very relevant to you)
+
+5. Check Active Queries
+SELECT pid, usename AS username, datname AS database_name, query, state, wait_event, backend_start, query_start, state_change, client_addr,
+client_port FROM pg_stat_activity WHERE state = 'active' ORDER BY query_start;
+What it does:
+Shows all currently running queries
+
+Key fields:
+Column
+Meaning
+state
+active / idle
+wait_event
+what it's waiting for
+query_start
+when it started
+client_addr
+source IP
+
+
+Use case:
+Monitoring system activity
+Detecting slow queries
+
+6. Monitor Long-Running Queries
+SELECT pid, usename, datname, query, state, query_start, now() - query_start AS duration FROM pg_stat_activity WHERE state = 'active' AND now() - query_start > interval '5 minutes' ORDER BY duration DESC;
+What it does:
+Shows queries running longer than 5 minutes
+AND now() - query_start > interval '5 minutes'
+
+Why this matters:
+Long-running queries:
+Block others
+Consume CPU
+Slow ETL pipelines
+
+7. Cancel vs Terminate
+Cancel Query (Graceful)
+SELECT pg_cancel_backend(pid);
+What it does:
+Stops query
+Keeps session alive
+Safe option
+
+Terminate Query (Force)
+SELECT pg_terminate_backend(pid);
+What it does:
+Kills session completely
+Rolls back transaction
+Aggressive option
+
+8. Kill All Active Queries (Dangerous)
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE state = 'active'
+AND query NOT LIKE '%pg_stat_activity%';
+What it does:
+Kills ALL active queries except itself
+
+VERY IMPORTANT:
+Can:
+Crash applications
+Break ETL pipelines
+Rollback important transactions
+
+9. Kill Long-Running Queries Automatically
+SELECT pg_terminate_backend(pid)
+FROM pg_stat_activity
+WHERE state = 'active'
+AND now() - query_start > interval '5 minutes';
+
+SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'active' AND now() - query_start > interval '5 minutes';  
+What it does:
+Automatically kills queries running longer than 5 minutes
+
+Use case:
+Production control
+Prevent runaway queries
+
+FINAL SUMMARY (VERY IMPORTANT)
+ Workflow in real life:
+Check active queries
+ → pg_stat_activity
+Check long-running queries
+ → duration filter
+Check blocking issues
+ → pg_locks + pg_stat_activity
+Decide action
+Try:
+
+ pg_cancel_backend(pid)
+
+
+If not working:
+
+ pg_terminate_backend(pid)
+
+
+
+PRO TIP (From real-world data engineering)
+Since you're working with:
+PostgreSQL
+ETL pipelines
+Airflow / ADF
+Always check BEFORE killing:
+Is it a batch job?
+Is it month-end processing?
+Is it a critical pipeline?
+
