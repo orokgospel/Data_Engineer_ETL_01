@@ -2,9 +2,11 @@ This is real production-level PostgreSQL monitoring & troubleshooting SQL, and i
 
 1. Kill a Specific Query
 SELECT pg_terminate_backend(3527723);
- What it does:
+
+What it does:
 Forcefully kills a running PostgreSQL session (process) using its PID (Process ID)
- Breakdown:
+
+Breakdown:
 pg_terminate_backend(pid) → Terminates the backend process completely
 3527723 → The process ID of the query/session
 Important:
@@ -25,7 +27,7 @@ Emergency situation
 
 SELECT blocked_locks.pid AS blocked_pid, blocked_activity.usename AS blocked_user, blocking_locks.pid AS blocking_pid, blocking_activity.usename AS blocking_user, 
 blocked_activity.query AS blocked_query, blocking_activity.query AS blocking_query
- FROM pg_locks blocked_locks 
+FROM pg_locks blocked_locks 
 JOIN pg_stat_activity blocked_activity ON blocked_activity.pid = blocked_locks.pid JOIN pg_locks blocking_locks ON blocking_locks.locktype = blocked_locks.locktype
 AND blocking_locks.database IS NOT DISTINCT FROM blocked_locks.database AND blocking_locks.relation IS NOT DISTINCT FROM blocked_locks.relation 
 AND blocking_locks.page IS NOT DISTINCT FROM blocked_locks.page AND blocking_locks.tuple IS NOT DISTINCT 
@@ -46,6 +48,7 @@ SELECT
    blocking_activity.usename AS blocking_user,
    blocked_activity.query AS blocked_query,
    blocking_activity.query AS blocking_query
+
 What it does:
 Finds:
 Queries that are blocked (waiting)
@@ -124,6 +127,7 @@ SELECT
 
 SELECT a.pid, a.usename, a.query, l.mode, l.granted, c.relname AS locked_table FROM pg_locks l JOIN pg_stat_activity a ON a.pid = l.pid 
 LEFT JOIN pg_class c ON l.relation = c.oid WHERE c.relname IS NOT NULL ORDER BY l.granted, c.relname;
+
 What it does:
 Shows:
 Who is locking what
