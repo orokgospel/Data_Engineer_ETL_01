@@ -33,7 +33,7 @@ connection_url = URL.create(
     "postgresql+psycopg2",
     username="postgres",
     password="Jesus200#",
-    host="host.docker.internal",   # 🔥 IMPORTANT if using Docker
+    host="host.docker.internal",   # IMPORTANT if using Docker
     port=5433,
     database="training_db"
 )
