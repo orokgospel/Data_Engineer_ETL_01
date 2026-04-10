@@ -29,7 +29,8 @@ SELECT blocked_locks.pid AS blocked_pid, blocked_activity.usename AS blocked_use
 blocked_activity.query AS blocked_query, blocking_activity.query AS blocking_query
 FROM pg_locks blocked_locks 
 JOIN pg_stat_activity blocked_activity ON blocked_activity.pid = blocked_locks.pid JOIN pg_locks blocking_locks ON blocking_locks.locktype = blocked_locks.locktype
-AND blocking_locks.database IS NOT DISTINCT FROM blocked_locks.database AND blocking_locks.relation IS NOT DISTINCT FROM blocked_locks.relation 
+AND blocking_locks.database IS NOT DISTINCT FROM blocked_locks.database 
+AND blocking_locks.relation IS NOT DISTINCT FROM blocked_locks.relation 
 AND blocking_locks.page IS NOT DISTINCT FROM blocked_locks.page AND blocking_locks.tuple IS NOT DISTINCT 
 FROM blocked_locks.tuple AND 
 blocking_locks.virtualxid IS NOT DISTINCT FROM blocked_locks.virtualxid AND blocking_locks.transactionid IS NOT DISTINCT 
@@ -124,8 +125,7 @@ SELECT
    l.mode,
    l.granted,
    c.relname AS locked_table
-
-SELECT a.pid, a.usename, a.query, l.mode, l.granted, c.relname AS locked_table FROM pg_locks l JOIN pg_stat_activity a ON a.pid = l.pid 
+FROM pg_locks l JOIN pg_stat_activity a ON a.pid = l.pid 
 LEFT JOIN pg_class c ON l.relation = c.oid WHERE c.relname IS NOT NULL ORDER BY l.granted, c.relname;
 
 What it does:
