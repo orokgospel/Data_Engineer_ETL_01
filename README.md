@@ -50,3 +50,12 @@ Pump station batch data
 4. Move into warehouse tables
 5. Run monitoring scripts for locks & performance
 6. Trigger alerts via email (Airflow DAG)
+
+# Orchestration & Scheduling
+- Managed with Apache Airflow
+- DAG runs daily
+
+# Monitoring & Logging
+- Query performance tracking
+- Lock monitoring
+- Email alerts via Gmail API
