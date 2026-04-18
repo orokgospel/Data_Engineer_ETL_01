@@ -1,4 +1,4 @@
-# gospel_ETL_for_dataeng
+# Gospel_ETL_&_ELT_for_Data-Engineering
 
 # End-to-End Banking ETL Pipeline with Monitoring & Alerting
 
