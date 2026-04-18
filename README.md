@@ -1,4 +1,12 @@
 # gospel_ETL_for_dataeng
+
+# End-to-End Banking ETL Pipeline with Monitoring & Alerting
+
+This project demonstrates a production-grade data engineering pipeline
+that extracts, transforms, and loads banking transaction data into a PostgreSQL data warehouse,
+with monitoring, alerting, and batch processing capabilities.
+
+
 This is my ETL as well as the logging Python Project for Data Engineering.
 
 In this project I did the following:
