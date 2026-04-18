@@ -21,6 +21,11 @@ Also went ahead to use the learning experience and project to carry out an ETL p
 - Save the transformed data in a ready-to-load csv format which data engineers can use to load into an RDBMS or Data Analyst/Scientist can use for Analysis.
 
 
+
+<img width="1200" height="693" alt="image" src="https://github.com/user-attachments/assets/ff134da5-ff65-48c4-8b2b-d530ebc70032" />
+
+
+
 # Tech Stack
 1. Python
 2. PostgreSQL
