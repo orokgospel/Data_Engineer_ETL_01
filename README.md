@@ -59,3 +59,8 @@ Pump station batch data
 - Query performance tracking
 - Lock monitoring
 - Email alerts via Gmail API
+
+# Challenges & Design Decisions
+Example:
+Handling large datasets → batching
+PostgreSQL locks → monitoring scripts
