@@ -19,3 +19,17 @@ Also went ahead to use the learning experience and project to carry out an ETL p
 - Read or collect inputted batch pumping parameters of petroleum product from source station or depot.
 - Transform the collected data.
 - Save the transformed data in a ready-to-load csv format which data engineers can use to load into an RDBMS or Data Analyst/Scientist can use for Analysis.
+
+
+# Tech Stack
+Python
+PostgreSQL
+Apache Airflow
+Docker
+SQL
+Pandas
+
+# Data Sources
+Banking transaction datasets
+JSON market data
+Pump station batch data
