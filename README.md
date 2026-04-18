@@ -22,12 +22,15 @@ Also went ahead to use the learning experience and project to carry out an ETL p
 
 
 # Tech Stack
-Python
-PostgreSQL
-Apache Airflow
-Docker
-SQL
-Pandas
+1. Python
+2. PostgreSQL
+3. Apache Airflow
+4. Docker
+6. SQL
+7. Pandas
+8. Flink
+9. Iceberg
+10. Trino
 
 # Data Sources
 Custom made Banking transaction datasets
