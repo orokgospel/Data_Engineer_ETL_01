@@ -64,3 +64,6 @@ Pump station batch data
 Example:
 Handling large datasets → batching
 PostgreSQL locks → monitoring scripts
+
+# Contributors
+Gospel Orok
