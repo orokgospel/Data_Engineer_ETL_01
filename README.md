@@ -2,9 +2,34 @@
 
 # End-to-End Banking ETL Pipeline with Monitoring & Alerting
 
-This project demonstrates a production-grade data engineering pipeline
-that extracts, transforms, and loads banking transaction data into a PostgreSQL data warehouse,
-with monitoring, alerting, and batch processing capabilities.
+This project showcases a production-grade data engineering pipeline designed to extract, transform, and load (ETL) banking transaction data into a PostgreSQL data warehouse, with built-in capabilities for monitoring, alerting, and efficient batch processing.
+
+It combines practical ETL development with operational logging and performance tracking, reflecting real-world data engineering workflows.
+
+# What This Project Covers
+The project is divided into two major implementations:
+1. Banking & Market Data ETL Pipeline
+Executes end-to-end ETL processes using Python
+Extracts bank and market capitalization data from a JSON source (bank_market_cap.json)
+Transforms market capitalization values using exchange rate data for currency standardization
+Loads the transformed dataset into structured CSV outputs for downstream consumption.
+
+2. Petroleum Pumping Data Pipeline (Extended Use Case)
+
+Building on the core ETL concepts, this project also includes a real-world industrial data scenario:
+- Ingests batch pumping parameters from petroleum source stations or depots
+- Applies transformation logic to clean and standardize the data
+- Outputs the processed data into a ready-to-load CSV format
+This output is designed to be:
+- Easily ingested into relational databases (e.g., PostgreSQL)
+- Directly usable by data analysts and data scientists for reporting and analysis.
+
+# Key Highlights:
+- End-to-end ETL pipeline development using Python
+- Practical data transformation techniques (currency conversion, data standardization)
+- Batch data processing for large datasets
+- Logging and monitoring for pipeline observability
+- Multi-domain application (banking + oil & gas use case)
 
 
 This is my ETL as well as the logging Python Project for Data Engineering.
@@ -54,11 +79,11 @@ Pump station batch data
 5. Run monitoring scripts for locks & performance
 6. Trigger alerts via email (Airflow DAG)
 
-# Orchestration & Scheduling
+# Orchestration & Scheduling :
 - Managed with Apache Airflow
 - DAG runs daily
 
-# Monitoring & Logging
+# Monitoring & Logging:
 - Query performance tracking
 - Lock monitoring
 - Email alerts via Gmail API
