@@ -42,6 +42,9 @@ Custom made Banking transaction datasets
 JSON market data
 Pump station batch data
 
+# Data Modeling
+- Fact tables: transactions
+- Dimension tables: customers, accounts
 
 # Pipeline Workflow (Step-by-Step)
 1. Extract data from source systems (PostgreSQL / JSON)
