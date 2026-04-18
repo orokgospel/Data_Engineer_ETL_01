@@ -30,6 +30,15 @@ SQL
 Pandas
 
 # Data Sources
-Banking transaction datasets
+Custom made Banking transaction datasets
 JSON market data
 Pump station batch data
+
+
+# Pipeline Workflow (Step-by-Step)
+1. Extract data from source systems (PostgreSQL / JSON)
+2. Transform data (cleaning, currency conversion, formatting)
+3. Load into staging tables
+4. Move into warehouse tables
+5. Run monitoring scripts for locks & performance
+6. Trigger alerts via email (Airflow DAG)
