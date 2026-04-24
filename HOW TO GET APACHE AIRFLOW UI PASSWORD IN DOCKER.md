@@ -1,12 +1,15 @@
 # How to Get Airflow UI Password on Docker:
 
-First Get your container Name: <your_airflow_container_name>
+First Get your container Name: 
+<your_airflow_container_name>
+
 First, get your container name:
 >docker ps
 My container name is:
-airflow-docker-sleek-airflow-1
+>airflow-docker-sleek-airflow-1
+
 Run this exact command in PowerShell:
-docker exec -it airflow-docker-sleek-airflow-1 bash -c "cat /opt/airflow/simple_auth_manager_passwords.json.generated"
+>docker exec -it airflow-docker-sleek-airflow-1 bash -c "cat /opt/airflow/simple_auth_manager_passwords.json.generated"
 
 If file is missing or If file does NOT exist
 Search for it: 
