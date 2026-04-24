@@ -34,9 +34,10 @@ If you keep restarting containers, this will keep happening.
 Fix it properly via environment variables.
 
 In your Docker setup YAML:
+
 environment:
-  AIRFLOW__CORE__AUTH_MANAGER: airflow.auth.managers.simple.SimpleAuthManager
-  AIRFLOW__SIMPLE_AUTH_MANAGER__USERS: admin:Admin123!
+  >AIRFLOW__CORE__AUTH_MANAGER: airflow.auth.managers.simple.SimpleAuthManager
+  >AIRFLOW__SIMPLE_AUTH_MANAGER__USERS: admin:Admin123!
 
 Then restart:
 >docker compose down
