@@ -1,7 +1,8 @@
 # How to Get Airflow UI Password on Docker:
+
 First Get your container Name: <your_airflow_container_name>
 First, get your container name:
-docker ps
+>docker ps
 My container name is:
 airflow-docker-sleek-airflow-1
 Run this exact command in PowerShell:
