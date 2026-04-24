@@ -1,23 +1,31 @@
-1. Turn ON 2-Step Verification (Required)
+# 1. Turn ON 2-Step Verification (Required)
 
 Gmail App Passwords only work if 2FA is enabled.
 
 Go to: https://myaccount.google.com/security
+
 Under “Signing in to Google”
+
 Click 2-Step Verification
+
 Follow setup (SMS or Google Authenticator)
-2. Generate App Password
+
+# 2. Generate App Password
 
 After enabling 2FA:
 
-Go again to: https://myaccount.google.com/security
+- Go again to: https://myaccount.google.com/security
+  
 Click App passwords
-(You may need to search it if not visible)
+
+>(You may need to search it if not visible)
 
 Then:
 
 Select app: Mail
+
 Select device: Other (Custom name) → e.g. Python SMTP
+
 Click Generate
 
 You will get a 16-character password like:
@@ -34,12 +42,17 @@ Steps:
 
 Go to App Passwords page
 Click Create new app password
+
 Select:
-App: Mail
+> App: Mail
+> 
 Device: Custom (e.g. “Python Script”)
+
 Click Generate
+
 Copy it immediately
-3. Revoke old password (recommended)
+
+# 3. Revoke old password (recommended)
 
 If you think it’s exposed:
 
