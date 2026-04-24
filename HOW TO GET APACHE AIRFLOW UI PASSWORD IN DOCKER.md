@@ -24,6 +24,7 @@ Then inside container:
 
 Open container:
 >docker exec -it airflow-docker-sleek-airflow-1 bash
+>
 Overwrite password file:
 >
 >echo '{"admin": "Admin123!"}' > /opt/airflow/simple_auth_manager_passwords.json.generated
