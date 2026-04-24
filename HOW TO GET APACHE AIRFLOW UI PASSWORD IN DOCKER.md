@@ -24,9 +24,12 @@ Then inside container:
 Open container:
 >docker exec -it airflow-docker-sleek-airflow-1 bash
 Overwrite password file:
+>
 >echo '{"admin": "Admin123!"}' > /opt/airflow/simple_auth_manager_passwords.json.generated
+
 Restart container:
 Exit, then:
+
 >docker restart airflow-docker-sleek-airflow-1
 
 # Make password permanent
@@ -37,8 +40,10 @@ In your Docker setup YAML:
 
 environment:
   >AIRFLOW__CORE__AUTH_MANAGER: airflow.auth.managers.simple.SimpleAuthManager
+
   >AIRFLOW__SIMPLE_AUTH_MANAGER__USERS: admin:Admin123!
 
 Then restart:
 >docker compose down
+
 >docker compose up -d
