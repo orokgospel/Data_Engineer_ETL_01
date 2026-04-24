@@ -13,28 +13,31 @@ Run this exact command in PowerShell:
 
 If file is missing or If file does NOT exist
 Search for it: 
-docker exec -it airflow-docker-sleek-airflow-1 bash
+>docker exec -it airflow-docker-sleek-airflow-1 bash
+
 Then inside container:
-find / -name "*password*"
+- find / -name "*password*"
 
 
 # Reset password manually (this works 100%)
+
 Open container:
-docker exec -it airflow-docker-sleek-airflow-1 bash
+>docker exec -it airflow-docker-sleek-airflow-1 bash
 Overwrite password file:
-echo '{"admin": "Admin123!"}' > /opt/airflow/simple_auth_manager_passwords.json.generated
+>echo '{"admin": "Admin123!"}' > /opt/airflow/simple_auth_manager_passwords.json.generated
 Restart container:
 Exit, then:
-docker restart airflow-docker-sleek-airflow-1
+>docker restart airflow-docker-sleek-airflow-1
 
 # Make password permanent
 If you keep restarting containers, this will keep happening.
 Fix it properly via environment variables.
+
 In your Docker setup YAML:
 environment:
   AIRFLOW__CORE__AUTH_MANAGER: airflow.auth.managers.simple.SimpleAuthManager
   AIRFLOW__SIMPLE_AUTH_MANAGER__USERS: admin:Admin123!
 
 Then restart:
-docker compose down
-docker compose up -d
+>docker compose down
+>docker compose up -d
