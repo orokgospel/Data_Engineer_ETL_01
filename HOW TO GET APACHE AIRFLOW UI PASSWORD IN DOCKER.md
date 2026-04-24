@@ -5,6 +5,7 @@ First Get your container Name:
 
 First, get your container name:
 >docker ps
+>
 My container name is:
 >airflow-docker-sleek-airflow-1
 
