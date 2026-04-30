@@ -3,34 +3,45 @@ Apache airflow on Windows Docker
 Step 1
 Download Docker Desktop for Windows:
 https://docs.docker.com/desktop
+
 search and run this on command prompt:
-wsl --uppdate
+>wsl --uppdate
+
 next launch the docker app and follow the set up process
 also install vs code if you don't have:
 Download Visual Studio Code:
+
 https://code.visualstudio.com/download
 
 step 2
 create a dedicated airflow folder for airflow work
 Name it: workspace
+
 inside the folder, right click on empty space and open terminal
 enter:
 code .
 the command will launch VS Code and open the folder for development
+
 RUN ON COMMAND:
-docker build -t sleek-airflow:latest .
+>docker build -t sleek-airflow:latest .
+
 Then Start the Airflow Container:
-docker run -d -p 8081:8080 --name sleek-airflow sleek-airflow:latest standalone
+
+>docker run -d -p 8081:8080 --name sleek-airflow sleek-airflow:latest standalone
+
 http://localhost:8081
 
 To view logs to get password:  74ZcwqX3EA7GA5TA
 docker logs sleek-airflow
 
 clean sleek-airflow:
+
 docker rm sleek-airflow
 
 Create the folders Airflow needs:
+
 Right now your directory only had a Dockerfile earlier.
+
 You must create the folders that you mapped as volumes.
 
 NEXT:
@@ -44,7 +55,10 @@ airflow-docker
 └── dockerfile
 
 Add this in docker-compose.yml file:
+
+
 version: '3'
+
 services:
   sleek-airflow:
     image: sleek-airflow:latest
@@ -96,6 +110,7 @@ How to Change or Maintain the Airflow Password:
 Option 1 — Change password from CLI (Recommended)
 
 Run this command:
+
 docker exec -it sleek-airflow airflow users reset-password --username admin
 It will prompt:
 Password:
